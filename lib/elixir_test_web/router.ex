@@ -17,7 +17,7 @@ defmodule ElixirTestWeb.Router do
   scope "/", ElixirTestWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/", TodoLive, :index
   end
 
   # Other scopes may use custom stacks.
