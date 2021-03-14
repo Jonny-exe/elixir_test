@@ -100,8 +100,14 @@ defmodule ElixirTest.Todos do
   """
   def delete_todo(%Todo{} = todo) do
     todo
-    |> Repo.delete(todo)
+    |> Repo.delete()
     |> broadcast_change([:todo, :deleted])
+
+    # post = Repo.get!(Post, 42)
+    # case Repo.delete post do
+    #   {:ok, struct}        # Deleted with success
+    #   {:error, changeset}  # Something went wrong
+    # end
   end
 
   @doc """
