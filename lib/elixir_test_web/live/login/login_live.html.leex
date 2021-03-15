@@ -1,0 +1,6 @@
+<%= form_for @changeset, "#", [phx_change: "validate"], fn f -> %>
+
+  <%= text_input f, :name %>
+  <%= error_tag f, :name %>
+  <%= submit "Login", phx_disable_with: "Logging in..." %>
+<% end %>
