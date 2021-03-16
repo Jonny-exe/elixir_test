@@ -18,24 +18,19 @@ defmodule ElixirTestWeb.LoginLive do
     {:ok, assign(socket, changeset: Login.changeset(%Login{}, %{}))}
   end
 
-  def handle_event("login", %Login{} = login, socket) do
-    # IO.puts login.name
-    {:noreply, socket}
-  end
-
   def handle_event("validate", %{"login" => post}, socket) do
     changeset =
       %Login{}
       |> Login.changeset(post)
       |> Map.put(:action, :validate)
 
-    errors = elem(has_errors(changeset), 0)
-    IO.inspect(errors)
+    # errors = elem(has_errors(changeset), 0)
+    # IO.inspect(errors)
 
-    if errors === :ok do
-      IO.puts("NO ERRORS")
-      redirect(socket, to: "/")
-    end
+    # if errors === :ok do
+    #   IO.puts("NO ERRORS")
+    #   redirect(socket, to: "/oogle")
+    # end
 
     {:noreply, assign(socket, changeset: changeset)}
   end

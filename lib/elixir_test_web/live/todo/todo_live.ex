@@ -1,13 +1,20 @@
 defmodule ElixirTestWeb.TodoLive do
   use ElixirTestWeb, :live_view
   alias ElixirTest.Todos
+  alias ElixirTest.Users
 
-  def mount(params, _session, socket) do
+  @spec mount(any, any, Phoenix.LiveView.Socket.t()) :: {:ok, any}
+  def mount(_params, _session, socket) do
     Todos.subscribe()
-    {:ok, fetch(socket)}
+    Users.subscribe()
+
+    {:ok,
+     socket
+     |> fetch_todos()
+     |> fetch_users()}
   end
 
-  def handle_event("add", %{"todo" => todo} , socket) do
+  def handle_event("add", %{"todo" => todo}, socket) do
     Todos.create_todo(todo)
     {:noreply, socket}
   end
@@ -25,10 +32,14 @@ defmodule ElixirTestWeb.TodoLive do
   end
 
   def handle_info({Todos, [:todo | _], _}, socket) do
-    {:noreply, fetch(socket)}
+    {:noreply, fetch_todos(socket)}
   end
 
-  defp fetch(socket) do
+  defp fetch_todos(socket) do
+    assign(socket, todos: Todos.list_todos())
+  end
+
+  defp fetch_users(socket) do
     assign(socket, todos: Todos.list_todos())
   end
 end
