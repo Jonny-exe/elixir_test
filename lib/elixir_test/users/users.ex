@@ -6,7 +6,7 @@ defmodule ElixirTest.Users do
   import Ecto.Query, warn: false
   alias ElixirTest.Repo
 
-  alias ElixirTest.Todos.Todo
+  alias ElixirTest.Users.User
   alias Phoenix.PubSub
 
   @topic inspect(__MODULE__)
@@ -28,8 +28,8 @@ defmodule ElixirTest.Users do
       [%Todo{}, ...]
 
   """
-  def list_todos do
-    Repo.all(Todo)
+  def list_users do
+    Repo.all(User)
   end
 
   @doc """
@@ -46,7 +46,7 @@ defmodule ElixirTest.Users do
       ** (Ecto.NoResultsError)
 
   """
-  def get_todo!(id), do: Repo.get!(Todo, id)
+  def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
   Creates a todo.
@@ -60,9 +60,9 @@ defmodule ElixirTest.Users do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_todo(attrs \\ %{}) do
-    %Todo{}
-    |> Todo.changeset(attrs)
+  def create_user(attrs \\ %{}) do
+    %User{}
+    |> User.changeset(attrs)
     |> Repo.insert()
     |> broadcast_change([:todo, :created])
   end
@@ -79,9 +79,9 @@ defmodule ElixirTest.Users do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_todo(%Todo{} = todo, attrs) do
-    todo
-    |> Todo.changeset(attrs)
+  def update_todo(%User{} = user, attrs) do
+    user
+    |> User.changeset(attrs)
     |> Repo.update()
     |> broadcast_change([:todo, :updated])
   end
@@ -98,8 +98,8 @@ defmodule ElixirTest.Users do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_todo(%Todo{} = todo) do
-    todo
+  def delete_user(%User{} = user) do
+    user
     |> Repo.delete()
     |> broadcast_change([:todo, :deleted])
 
@@ -119,7 +119,7 @@ defmodule ElixirTest.Users do
       %Ecto.Changeset{data: %Todo{}}
 
   """
-  def change_todo(%Todo{} = todo, attrs \\ %{}) do
-    Todo.changeset(todo, attrs)
+  def change_user(%User{} = user, attrs \\ %{}) do
+    User.changeset(user, attrs)
   end
 end

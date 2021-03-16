@@ -1,18 +1,17 @@
-defmodule ElixirTest.Login do
+defmodule ElixirTest.Rooms.Room do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "logins" do
+  schema "rooms" do
     field :name, :string
 
     timestamps()
   end
 
   @doc false
-  def changeset(login, attrs) do
-    login
+  def changeset(room, attrs) do
+    room
     |> cast(attrs, [:name])
     |> validate_required([:name])
-    |> validate_length(:name, min: 5, max: 15)
   end
 end

@@ -18,4 +18,11 @@
       </td>
     </tr>
   <% end %>
+  <%= for user <- @users do %>
+    <tr>
+      <td>
+        <%= user.name %>
+      </td>
+    </tr>
+  <% end %>
 </table>

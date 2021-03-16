@@ -1,6 +1,5 @@
 defmodule ElixirTestWeb.Router do
   use ElixirTestWeb, :router
-  import ElixirTestWeb
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -17,8 +16,8 @@ defmodule ElixirTestWeb.Router do
 
   scope "/", ElixirTestWeb do
     pipe_through :browser
-    live "/login", LoginLive, :login
-    post "/", TodoController, :post
+    live "/register", RegisterLive, :show
+    # post "/", TodoController, :post
     live "/", TodoLive, :index
   end
 

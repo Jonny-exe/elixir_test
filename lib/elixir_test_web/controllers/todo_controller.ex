@@ -1,5 +1,6 @@
 defmodule ElixirTestWeb.TodoController do
-  def call(conn, _params) do
+  def call(conn, params) do
+    IO.inspect(params)
     conn
     |> Plug.Conn.resp(200, "OK")
 

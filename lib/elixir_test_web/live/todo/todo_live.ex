@@ -2,8 +2,9 @@ defmodule ElixirTestWeb.TodoLive do
   use ElixirTestWeb, :live_view
   alias ElixirTest.Todos
   alias ElixirTest.Users
+  alias ElixirTest.Tokens
+  alias ElixirTest.Rooms
 
-  @spec mount(any, any, Phoenix.LiveView.Socket.t()) :: {:ok, any}
   def mount(_params, _session, socket) do
     Todos.subscribe()
     Users.subscribe()
@@ -11,7 +12,25 @@ defmodule ElixirTestWeb.TodoLive do
     {:ok,
      socket
      |> fetch_todos()
-     |> fetch_users()}
+     |> fetch_rooms()}
+  end
+
+  def handle_params(%{"access_token" => token, "name" => name}, _, socket) do
+    try do
+      # %{"access_token" => token, "name" => name} = params
+      if Tokens.get_token!(name) == token do
+        {:ok, assign(socket, name: name)}
+      else
+        redirect_to_login(socket)
+      end
+    rescue
+      _e -> redirect_to_login(socket)
+    end
+  end
+
+  def redirect_to_login(socket) do
+    push_redirect(socket, to: "/login")
+    {:noreply, socket}
   end
 
   def handle_event("add", %{"todo" => todo}, socket) do
@@ -39,7 +58,7 @@ defmodule ElixirTestWeb.TodoLive do
     assign(socket, todos: Todos.list_todos())
   end
 
-  defp fetch_users(socket) do
-    assign(socket, todos: Todos.list_todos())
+  defp fetch_rooms(socket) do
+    assign(socket, rooms: Rooms.list_rooms())
   end
 end
