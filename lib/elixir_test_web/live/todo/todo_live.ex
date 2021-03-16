@@ -15,22 +15,29 @@ defmodule ElixirTestWeb.TodoLive do
      |> fetch_rooms()}
   end
 
-  def handle_params(%{"access_token" => token, "name" => name}, _, socket) do
+  def handle_params(params, _, socket) do
+    IO.inspect(params)
+
     try do
-      # %{"access_token" => token, "name" => name} = params
+      %{"access_token" => token, "name" => name} = params
+
       if Tokens.get_token!(name) == token do
         {:ok, assign(socket, name: name)}
       else
         redirect_to_login(socket)
       end
     rescue
-      _e -> redirect_to_login(socket)
+      MatchError -> redirect_to_login(socket)
+    catch
+      _value -> redirect_to_login(socket)
     end
   end
 
   def redirect_to_login(socket) do
-    push_redirect(socket, to: "/login")
-    {:noreply, socket}
+    {:noreply,
+     push_redirect(socket,
+       to: "/register"
+     )}
   end
 
   def handle_event("add", %{"todo" => todo}, socket) do
