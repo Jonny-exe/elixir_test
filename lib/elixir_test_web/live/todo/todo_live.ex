@@ -16,13 +16,18 @@ defmodule ElixirTestWeb.TodoLive do
   end
 
   def handle_params(params, _, socket) do
+    IO.puts("TODO")
     IO.inspect(params)
 
     try do
       %{"access_token" => token, "name" => name} = params
+      userinfo = Tokens.get_token!(name)
+      IO.puts("USERINFO")
+      IO.inspect(userinfo)
 
-      if Tokens.get_token!(name) == token do
-        {:ok, assign(socket, name: name)}
+      if Map.get(userinfo, :token) == token do
+        Tokens.delete_token(userinfo)
+        {:noreply, assign(socket, name: name)}
       else
         redirect_to_login(socket)
       end
@@ -33,10 +38,12 @@ defmodule ElixirTestWeb.TodoLive do
     end
   end
 
-  def redirect_to_login(socket) do
+  defp redirect_to_login(socket) do
+    IO.puts("Redirect")
+
     {:noreply,
      push_redirect(socket,
-       to: "/register"
+       to: "/credentials/register"
      )}
   end
 

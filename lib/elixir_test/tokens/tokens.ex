@@ -9,12 +9,7 @@ defmodule ElixirTest.Tokens do
   alias ElixirTest.Tokens.Token
 
   def get_token!(name) do
-    query =
-      from user in "tokens",
-        where: user.name == ^name,
-        select: user.token
-
-    Repo.all(query)
+    Repo.get_by(Token, name: name)
   end
 
   @doc """

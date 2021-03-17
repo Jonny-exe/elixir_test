@@ -16,8 +16,7 @@ defmodule ElixirTestWeb.Router do
 
   scope "/", ElixirTestWeb do
     pipe_through :browser
-    live "/register", RegisterLive, :show
-    # post "/", TodoController, :post
+    live "/credentials/:type", CredentialsLive, :credentials
     live "/", TodoLive, :index
   end
 

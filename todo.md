@@ -1,0 +1,2 @@
+ - Make common template for login and register
+ - Make option to create, remove, join, and accept people into rooms
