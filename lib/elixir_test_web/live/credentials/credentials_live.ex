@@ -28,17 +28,59 @@ defmodule ElixirTestWeb.CredentialsLive do
     end
   end
 
-  def handle_event("register", %{"user" => user}, socket) do
+  defp add_token(name) do
+    token = create_random_token(16)
+    Tokens.create_token(%{"token" => token, "name" => name})
+    {:ok, token}
+  end
 
+  defp redirect_with_token(name, socket) do
+    token = elem(add_token(name), 1)
+
+    {:noreply,
+     push_redirect(socket,
+       to: "/?access_token=#{token}&name=#{name}"
+     )}
+  end
+
+  defp create_random_token(bytes_count) do
+    bytes_count
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64(padding: false)
+  end
+
+  def handle_event("login", %{"user" => user}, socket) do
+    try do
+      %{"name" => input_name, "password" => input_password} = user
+      user = Users.get_user!(input_name)
+      password = Map.get(user, :password)
+
+      if input_password == password do
+        redirect_with_token(input_name, socket)
+      else
+        raise Ecto.NoResultsError, message: "incorrect password"
+      end
+    rescue
+      Ecto.NoResultsError ->
+        error_message = [name: {"username or password are incorrect", []}]
+
+        changeset =
+          %User{}
+          |> User.changeset(user)
+          |> Map.put(:action, :validate)
+
+        changeset = Map.put(changeset, :errors, error_message)
+        IO.puts("ERRORR")
+        IO.inspect(changeset)
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("register", %{"user" => user}, socket) do
     try do
       Users.create_user(user)
       name = user["name"]
-      token = elem(add_token(name), 1)
-
-      {:noreply,
-       push_redirect(socket,
-         to: "/?access_token=#{token}&name=#{name}"
-       )}
+      redirect_with_token(name, socket)
     rescue
       Ecto.ConstraintError ->
         changeset =
@@ -50,23 +92,6 @@ defmodule ElixirTestWeb.CredentialsLive do
         changeset = Map.put(changeset, :errors, error_message)
         {:noreply, assign(socket, changeset: changeset)}
     end
-  end
-
-  defp add_token(name) do
-    token = create_random_token(16)
-    Tokens.create_token(%{"token" => token, "name" => name})
-    {:ok, token}
-  end
-
-  defp create_random_token(bytes_count) do
-    bytes_count
-    |> :crypto.strong_rand_bytes()
-    |> Base.url_encode64(padding: false)
-  end
-
-  def handle_event("login", %{"user" => user}, socket) do
-    # TODO: handle login
-    {:noreply, socket}
   end
 
   def handle_event("validate", %{"user" => post}, socket) do

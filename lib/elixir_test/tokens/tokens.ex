@@ -8,7 +8,7 @@ defmodule ElixirTest.Tokens do
 
   alias ElixirTest.Tokens.Token
 
-  def get_token!(name) do
+  def get_token(name) do
     Repo.get_by(Token, name: name)
   end
 

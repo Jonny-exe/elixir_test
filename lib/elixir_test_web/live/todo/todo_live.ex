@@ -21,15 +21,17 @@ defmodule ElixirTestWeb.TodoLive do
 
     try do
       %{"access_token" => token, "name" => name} = params
-      userinfo = Tokens.get_token!(name)
-      IO.puts("USERINFO")
-      IO.inspect(userinfo)
+      userinfo = Tokens.get_token(name)
+
+      if userinfo == nil do
+        raise MatchError, message: "Incorrect access not found"
+      end
 
       if Map.get(userinfo, :token) == token do
         Tokens.delete_token(userinfo)
         {:noreply, assign(socket, name: name)}
       else
-        redirect_to_login(socket)
+        raise MatchError, message: "Error with userinfo"
       end
     rescue
       MatchError -> redirect_to_login(socket)

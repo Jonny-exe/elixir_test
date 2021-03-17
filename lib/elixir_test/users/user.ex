@@ -15,6 +15,5 @@ defmodule ElixirTest.Users.User do
     |> validate_required([:name, :password])
     |> unique_constraint(:name, name: :name)
     |> validate_length(:name, min: 5, max: 15)
-    |> validate_length(:password, min: 5, max: 20)
   end
 end
