@@ -23,7 +23,6 @@ defmodule ElixirTest.Rooms do
   Returns the list of rooms.
 
   ## Examples
-i
       iex> list_rooms()
       [%Room{}, ...]
 

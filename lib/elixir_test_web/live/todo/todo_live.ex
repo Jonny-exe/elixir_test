@@ -4,10 +4,12 @@ defmodule ElixirTestWeb.TodoLive do
   alias ElixirTest.Users
   alias ElixirTest.Tokens
   alias ElixirTest.Rooms
+  alias ElixirTest.Rooms.Room
 
   def mount(_params, _session, socket) do
     Todos.subscribe()
     Users.subscribe()
+    socket = assign(socket, changeset_room: Room.changeset(%Room{}, %{}))
 
     {:ok,
      socket
@@ -16,9 +18,6 @@ defmodule ElixirTestWeb.TodoLive do
   end
 
   def handle_params(params, _, socket) do
-    IO.puts("TODO")
-    IO.inspect(params)
-
     try do
       %{"access_token" => token, "name" => name} = params
       userinfo = Tokens.get_token(name)
@@ -41,12 +40,19 @@ defmodule ElixirTestWeb.TodoLive do
   end
 
   defp redirect_to_login(socket) do
-    IO.puts("Redirect")
-
     {:noreply,
      push_redirect(socket,
        to: "/credentials/register"
      )}
+  end
+
+  def handle_event("validate_room", %{"room" => room}, socket) do
+    changeset =
+      %Room{}
+      |> Room.changeset(room)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, changeset_room: changeset)}
   end
 
   def handle_event("add", %{"todo" => todo}, socket) do
