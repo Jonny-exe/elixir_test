@@ -64,9 +64,7 @@
     </tr>
   <% end %>
 </table>
-<div phx-click="open_modal">
   <button phx-click="open_modal"> Create new room </button>
-</div>
   <div class="modal modal-wrapper <%= if(@modal_active, do: "active", else: "deactive") %>">
     <div class="modal-content">
       <h2> Create new room </h2>

@@ -32,6 +32,9 @@ defmodule ElixirTest.Todos do
     Repo.all(Todo)
   end
 
+  def list_todos_in_room(room) do
+    Repo.all(from t in Todo, where: t.room == ^room)
+  end
   @doc """
   Gets a single todo.
 

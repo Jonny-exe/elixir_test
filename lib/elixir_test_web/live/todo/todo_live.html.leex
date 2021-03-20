@@ -9,6 +9,9 @@
         <%= todo.title %>
       </td>
       <td>
+        <%= todo.writer %>
+      </td>
+      <td>
         <%= checkbox(:todo, :done,value: todo.done, phx_value_id: todo.id, phx_click: "toggle_done") %>
       </td>
       <td>
@@ -19,3 +22,17 @@
     </tr>
   <% end %>
 </table>
+<%= if @name == @room_creator do %>
+  <button phx-click="open_modal"> Invite people </button>
+  <div class="modal modal-wrapper <%= if(@modal_active, do: "active", else: "deactive") %>">
+    <div class="modal-content">
+      <h2> Invite new people </h2>
+      <%= form_for @changeset, "#", [phx_submit: "create_invitation"],  fn f -> %>
+        <%= text_input f, :name, placeholder: "name" %>
+        <%= submit "Add", phx_disable_with: "Adding..."%>
+      <%= end %>
+  </div>
+  <div phx-click="close_modal" class="modal modal-overlay">
+  </div>
+</div>
+<% end %>

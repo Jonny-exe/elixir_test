@@ -18,7 +18,7 @@ defmodule ElixirTestWeb.Router do
     pipe_through :browser
     live "/credentials/:type", CredentialsLive, :credentials
     live "/", RoomLive, :index
-    live "/room/:id", TodoLive, :index
+    live "/room/:roomid", TodoLive, :index
   end
 
   # Other scopes may use custom stacks.
