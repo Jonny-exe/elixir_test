@@ -5,6 +5,7 @@ defmodule ElixirTest.Repo.Migrations.CreateUserrooms do
     create table(:userrooms) do
       add :name, :string
       add :roomid, :integer
+      add :accepted, :boolean
 
       timestamps()
     end

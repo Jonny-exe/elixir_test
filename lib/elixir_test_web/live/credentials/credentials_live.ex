@@ -28,7 +28,7 @@ defmodule ElixirTestWeb.CredentialsLive do
     end
   end
 
-  defp add_token(name) do
+  def add_token(name) do
     token = create_random_token(16)
     Tokens.create_token(%{"token" => token, "name" => name})
     {:ok, token}
@@ -99,5 +99,34 @@ defmodule ElixirTestWeb.CredentialsLive do
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, changeset: changeset)}
+  end
+
+  def is_login_correct(params, socket) do
+    try do
+      %{"access_token" => token, "name" => name} = params
+      userinfo = Tokens.get_token(name)
+
+      if userinfo == nil do
+        raise MatchError, message: "Incorrect access not found"
+      end
+
+      if Map.get(userinfo, :token) == token do
+        Tokens.delete_token(userinfo)
+        {:noreply, assign(socket, name: name)}
+      else
+        raise MatchError, message: "Error with userinfo"
+      end
+    rescue
+      MatchError -> redirect_to_login(socket)
+    catch
+      _value -> redirect_to_login(socket)
+    end
+  end
+
+  defp redirect_to_login(socket) do
+    {:noreply,
+     push_redirect(socket,
+       to: "/credentials/login"
+     )}
   end
 end

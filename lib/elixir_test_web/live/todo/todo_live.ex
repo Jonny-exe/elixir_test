@@ -1,6 +1,7 @@
 defmodule ElixirTestWeb.TodoLive do
   use ElixirTestWeb, :live_view
   alias ElixirTest.Todos
+  alias ElixirTestWeb.CredentialsLive
   alias ElixirTest.Users
   alias ElixirTest.Tokens
   alias ElixirTest.Rooms
@@ -9,53 +10,18 @@ defmodule ElixirTestWeb.TodoLive do
   def mount(_params, _session, socket) do
     Todos.subscribe()
     Users.subscribe()
-    socket = assign(socket, changeset_room: Room.changeset(%Room{}, %{}))
+    socket = assign(socket, changeset: Todos.Todo.changeset(%Todos.Todo{}, %{}))
 
     {:ok,
      socket
-     |> fetch_todos()
-     |> fetch_rooms()}
+     |> fetch_todos()}
   end
 
   def handle_params(params, _, socket) do
-    try do
-      %{"access_token" => token, "name" => name} = params
-      userinfo = Tokens.get_token(name)
-
-      if userinfo == nil do
-        raise MatchError, message: "Incorrect access not found"
-      end
-
-      if Map.get(userinfo, :token) == token do
-        Tokens.delete_token(userinfo)
-        {:noreply, assign(socket, name: name)}
-      else
-        raise MatchError, message: "Error with userinfo"
-      end
-    rescue
-      MatchError -> redirect_to_login(socket)
-    catch
-      _value -> redirect_to_login(socket)
-    end
+    ElixirTestWeb.CredentialsLive.is_login_correct(params, socket)
   end
 
-  defp redirect_to_login(socket) do
-    {:noreply,
-     push_redirect(socket,
-       to: "/credentials/register"
-     )}
-  end
-
-  def handle_event("validate_room", %{"room" => room}, socket) do
-    changeset =
-      %Room{}
-      |> Room.changeset(room)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign(socket, changeset_room: changeset)}
-  end
-
-  def handle_event("add", %{"todo" => todo}, socket) do
+  def handle_event("add_todo", %{"todo" => todo}, socket) do
     Todos.create_todo(todo)
     {:noreply, socket}
   end
@@ -78,9 +44,5 @@ defmodule ElixirTestWeb.TodoLive do
 
   defp fetch_todos(socket) do
     assign(socket, todos: Todos.list_todos())
-  end
-
-  defp fetch_rooms(socket) do
-    assign(socket, rooms: Rooms.list_rooms())
   end
 end

@@ -28,8 +28,8 @@ defmodule ElixirTest.Userrooms do
       [%Todo{}, ...]
 
   """
-  def list_usersroom_by_name(name) do
-    Repo.all(from u in Userroom, where: u.name == ^name)
+  def list_usersroom_by_name(name, accepted) do
+    Repo.all(from u in Userroom, where: u.name == ^name and u.accepted == ^accepted)
   end
 
   @doc """

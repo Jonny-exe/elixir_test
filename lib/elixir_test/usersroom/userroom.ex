@@ -5,13 +5,14 @@ defmodule ElixirTest.Userrooms.Userroom do
   schema "userrooms" do
     field :name, :string
     field :roomid, :integer
+    field :accepted, :boolean
     timestamps()
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
-    |> cast(attrs, [:name, :roomid])
-    |> validate_required([:name, :roomid])
+  def changeset(userroom, attrs) do
+    userroom
+    |> cast(attrs, [:name, :roomid, :accepted])
+    |> validate_required([:name, :roomid, :accepted])
   end
 end

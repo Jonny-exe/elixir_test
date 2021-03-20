@@ -1,4 +1,4 @@
-<form action="#" phx-submit="add-todo">
+<form action="#" phx-submit="add_todo">
   <%= text_input :todo, :title, placeholder: "Todo" %>
   <%= submit "Add", phx_disable_with: "Adding..." %>
 </form>
@@ -18,17 +18,4 @@
       </td>
     </tr>
   <% end %>
-</table>
-<%= form_for @changeset_room, "#", [phx_change: "validate-room", phx_submit: "add-room"],  fn f -> %>
-<%= text_input :room, :title, placeholder: "Room" %>
-<%= submit "Add", phx_disable_with: "Adding..." %>
-<% end %>
-<table>
-<%= for room <- @rooms do %>
-  <tr>
-    <td>
-      <%= room.name %>
-    </td>
-  </tr>
-<% end %>
 </table>

@@ -1,4 +1,4 @@
-<h1> Rooms available </h1>
+<h1> Rooms you're in </h1>
 <table>
   <tr>
     <th>
@@ -16,15 +16,15 @@
   </tr>
   <%= for room <- @rooms do %>
     <tr>
+      <td> <%= room.roomname %> </td>
       <td> <%= room.name %> </td>
-      <td> <%= room.creator %> </td>
       <td>
-        <%= link  to: "#", phx_value_id: room.id, phx_click: "join_room" do %>
+        <%= link  to: "#", phx_value_id: room.roomid, phx_click: "join_room" do %>
           <span class="link-button"> Goto </span>
         <% end %>
       </td>
       <td>
-        <%= link  to: "#", phx_value_id: room.id, phx_click: "delete_room" do %>
+        <%= link  to: "#", phx_value_id: room.roomid, phx_click: "delete_room" do %>
           <span class="link-button"> Remove </span>
         <% end %>
       </td>
@@ -35,7 +35,7 @@
 <table>
   <tr>
     <th>
-      Name
+      Invitation's sender
     </th>
     <th>
       Room's name
@@ -49,7 +49,7 @@
   </tr>
   <%= for room <- @room_invitations do %>
     <tr>
-      <td> <%= room.name %> </td>
+      <td> <%= room.name %> </td><%# Rooms creator and the person who sends invite will always bet the same %>
       <td> <%= room.roomname %> </td>
       <td>
         <%= link  to: "#", phx_value_id: room.id, phx_click: "join_room" do %>
