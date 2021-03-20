@@ -19,7 +19,7 @@
       <td> <%= room.roomname %> </td>
       <td> <%= room.name %> </td>
       <td>
-        <%= link  to: "#", phx_value_id: room.roomid, phx_click: "join_room" do %>
+        <%= link  to: "#", phx_value_id: room.roomid, phx_click: "goto_room" do %>
           <span class="link-button"> Goto </span>
         <% end %>
       </td>
@@ -52,12 +52,12 @@
       <td> <%= room.name %> </td><%# Rooms creator and the person who sends invite will always bet the same %>
       <td> <%= room.roomname %> </td>
       <td>
-        <%= link  to: "#", phx_value_id: room.id, phx_click: "join_room" do %>
+        <%= link  to: "#", phx_value_id: room.id, phx_click: "accept_invitation" do %>
           <span class="link-button"> Join </span>
         <% end %>
       </td>
       <td>
-        <%= link  to: "#", phx_value_id: room.id, phx_click: "delete_room" do %>
+        <%= link  to: "#", phx_value_id: room.id, phx_click: "decline_invitation" do %>
           <span class="link-button"> Decline </span>
         <% end %>
       </td>

@@ -81,13 +81,25 @@ defmodule ElixirTestWeb.RoomLive do
     {:noreply, socket}
   end
 
-  def handle_event("join_room", %{"id" => id}, socket) do
+  def handle_event("goto_room", %{"id" => id}, socket) do
     name = socket.assigns.name
     {:ok, token} = CredentialsLive.add_token(name)
     {:noreply,
      push_redirect(socket,
        to: "/room/#{id}?access_token=#{token}&name=#{name}"
      )}
+  end
+
+  def handle_event("accept_invitation", %{"id" => id}, socket) do
+    userroom = Userrooms.get_userroom!(id)
+    Userrooms.update_userroom(userroom, %{accepted: true})
+    {:noreply, fetch_rooms(socket)}
+  end
+
+  def handle_event("decline_invitation", %{"id" => id}, socket) do
+    userroom = Userrooms.get_userroom!(id)
+    Userrooms.delete_userroom(userroom)
+    {:noreply, fetch_userrooms(socket)}
   end
 
   def handle_info({Rooms, [:room | _], _}, socket) do
