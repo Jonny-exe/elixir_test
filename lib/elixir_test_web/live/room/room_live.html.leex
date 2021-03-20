@@ -1,4 +1,4 @@
-<h1> Rooms availiable </h1>
+<h1> Rooms available </h1>
 <table>
   <tr>
     <th>
@@ -8,16 +8,49 @@
       Creator
     </th>
     <th>
-      Join
+      Goto
     </th>
     <th>
-      Decline
+      Remove
     </th>
   </tr>
   <%= for room <- @rooms do %>
     <tr>
       <td> <%= room.name %> </td>
       <td> <%= room.creator %> </td>
+      <td>
+        <%= link  to: "#", phx_value_id: room.id, phx_click: "join_room" do %>
+          <span class="link-button"> Goto </span>
+        <% end %>
+      </td>
+      <td>
+        <%= link  to: "#", phx_value_id: room.id, phx_click: "delete_room" do %>
+          <span class="link-button"> Remove </span>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+<h1> Room invitations </h1>
+<table>
+  <tr>
+    <th>
+      Name
+    </th>
+    <th>
+      Room's name
+    </th>
+    <th>
+      Join
+    </th>
+    <th>
+      Decline
+    </th>
+  </tr>
+  <%= for room <- @room_invitations do %>
+    <tr>
+      <td> <%= room.name %> </td>
+      <td> <%= room.roomname %> </td>
       <td>
         <%= link  to: "#", phx_value_id: room.id, phx_click: "join_room" do %>
           <span class="link-button"> Join </span>
@@ -37,7 +70,7 @@
   <div class="modal modal-wrapper <%= if(@modal_active, do: "active", else: "deactive") %>">
     <div class="modal-content">
       <h2> Create new room </h2>
-      <%= form_for @changeset, "#", [phx_change: "validate", phx_submit: "add"],  fn f -> %>
+      <%= form_for @changeset, "#", [phx_change: "validate", phx_submit: "create_room"],  fn f -> %>
         <%= text_input f, :name, placeholder: "name" %>
         <%= error_tag f, :name %>
         <%= submit "Add", phx_disable_with: "Adding...", disabled: !@changeset.valid? %>

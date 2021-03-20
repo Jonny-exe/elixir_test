@@ -15,6 +15,7 @@ defmodule ElixirTest.Rooms.Room do
     |> cast(attrs, [:name, :creator])
     |> validate_required([:name, :creator])
     |> validate_length(:name, max: 20, min: 5)
+    |> unique_constraint(:name)
   end
 
   def input_changeset(room, attrs) do # The same but without creator

@@ -1,13 +1,12 @@
-defmodule ElixirTest.Rooms do
-
+defmodule ElixirTest.Userrooms do
   @moduledoc """
-  The Rooms context.
+  The Todos context.
   """
 
   import Ecto.Query, warn: false
   alias ElixirTest.Repo
 
-  alias ElixirTest.Rooms.Room
+  alias ElixirTest.Userrooms.Userroom
   alias Phoenix.PubSub
 
   @topic inspect(__MODULE__)
@@ -21,15 +20,16 @@ defmodule ElixirTest.Rooms do
   end
 
   @doc """
-  Returns the list of rooms.
+  Returns the list of todos.
 
   ## Examples
-      iex> list_rooms()
-      [%Room{}, ...]
+
+      iex> list_todos()
+      [%Todo{}, ...]
 
   """
-  def list_rooms do
-    Repo.all(Room)
+  def list_usersroom_by_name(name) do
+    Repo.all(from u in Userroom, where: u.name == ^name)
   end
 
   @doc """
@@ -39,17 +39,20 @@ defmodule ElixirTest.Rooms do
 
   ## Examples
 
-      iex> get_room!(123)
+      iex> get_todo!(123)
       %Todo{}
 
-      iex> get_room!(456)
+      iex> get_todo!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_room!(id), do: Repo.get!(Room, id)
+  def get_userroom_by_name!(name) do
+    Repo.get_by!(Userroom, name: name)
+  end
 
-  def get_room_by_name(name) do
-    Repo.get_by(Room, name: name)
+
+  def get_userroom!(id) do
+    Repo.get!(Userroom, id)
   end
 
   @doc """
@@ -57,18 +60,18 @@ defmodule ElixirTest.Rooms do
 
   ## Examples
 
-      iex> create_room(%{field: value})
+      iex> create_todo(%{field: value})
       {:ok, %Todo{}}
 
-      iex> create_room(%{field: bad_value})
+      iex> create_todo(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_room(attrs \\ %{}) do
-    %Room{}
-    |> Room.changeset(attrs)
+  def create_userroom(attrs \\ %{}) do
+    %Userroom{}
+    |> Userroom.changeset(attrs)
     |> Repo.insert()
-    |> broadcast_change([:room, :created])
+    |> broadcast_change([:userroom, :created])
   end
 
   @doc """
@@ -76,18 +79,18 @@ defmodule ElixirTest.Rooms do
 
   ## Examples
 
-      iex> update_room(todo, %{field: new_value})
+      iex> update_todo(todo, %{field: new_value})
       {:ok, %Todo{}}
 
-      iex> update_room(todo, %{field: bad_value})
+      iex> update_todo(todo, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_room(%Room{} = todo, attrs) do
-    todo
-    |> Room.changeset(attrs)
+  def update_userroom(%Userroom{} = user, attrs) do
+    user
+    |> Userroom.changeset(attrs)
     |> Repo.update()
-    |> broadcast_change([:room, :updated])
+    |> broadcast_change([:userroom, :updated])
   end
 
   @doc """
@@ -95,17 +98,17 @@ defmodule ElixirTest.Rooms do
 
   ## Examples
 
-      iex> delete_room(todo)
+      iex> delete_todo(todo)
       {:ok, %Todo{}}
 
-      iex> delete_room(todo)
+      iex> delete_todo(todo)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_room(%Room{} = todo) do
-    todo
+  def delete_userroom(%Userroom{} = userroom) do
+    userroom
     |> Repo.delete()
-    |> broadcast_change([:room, :deleted])
+    |> broadcast_change([:userroom, :deleted])
 
     # post = Repo.get!(Post, 42)
     # case Repo.delete post do
@@ -119,11 +122,11 @@ defmodule ElixirTest.Rooms do
 
   ## Examples
 
-      iex> change_room(todo)
+      iex> change_todo(todo)
       %Ecto.Changeset{data: %Todo{}}
 
   """
-  def change_room(%Room{} = room, attrs \\ %{}) do
-    Room.changeset(room, attrs)
+  def change_userroom(%Userroom{} = userroom, attrs \\ %{}) do
+    Userroom.changeset(userroom, attrs)
   end
 end

@@ -2,10 +2,13 @@ defmodule ElixirTestWeb.RoomLive do
   use ElixirTestWeb, :live_view
   alias ElixirTest.Tokens
   alias ElixirTest.Rooms
+  alias ElixirTest.Userrooms
   alias ElixirTest.Rooms.Room
 
   def mount(params, _session, socket) do
     Rooms.subscribe()
+    Userrooms.subscribe()
+
     try do
       %{"name" => name} = params
 
@@ -14,12 +17,14 @@ defmodule ElixirTestWeb.RoomLive do
           changeset: Room.input_changeset(%Room{}, %{}),
           rooms: fetch_rooms(socket),
           name: name,
-          modal_active: false
+          modal_active: false,
+          room_invitations: []
         )
 
       {:ok,
        socket
-       |> fetch_rooms()}
+       |> fetch_rooms()
+       |> fetch_userrooms()}
     rescue
       MatchError ->
         nil
@@ -65,9 +70,15 @@ defmodule ElixirTestWeb.RoomLive do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  def handle_event("add", %{"room" => room}, socket) do
+  def handle_event("create_room", %{"room" => room}, socket) do
     room = Map.put(room, "creator", socket.assigns.name)
     Rooms.create_room(room)
+
+    %{"name" => name} = room
+    roomid = Rooms.get_room_by_name(name).id
+
+    # TODO: you have to make this unique so it doens't crash on select when it gets more than one item
+    Userrooms.create_userroom(%{"name" => socket.assigns.name, "roomid" => roomid})
     {:noreply, assign(socket, modal_active: false)}
   end
 
@@ -80,8 +91,11 @@ defmodule ElixirTestWeb.RoomLive do
   end
 
   def handle_event("delete_room", %{"id" => id}, socket) do
-    todo = Rooms.get_room!(id)
-    Rooms.delete_room(todo)
+    room = Rooms.get_room!(id)
+    Rooms.delete_room(room)
+
+    userroom = Userrooms.get_userroom!(id)
+    Userrooms.delete_userroom(userroom)
     {:noreply, socket}
   end
 
@@ -91,12 +105,42 @@ defmodule ElixirTestWeb.RoomLive do
     {:noreply, socket}
   end
 
-  def handle_info(msg, socket) do
-    IO.inspect(msg)
+  def handle_info({Rooms, [:room | _], _}, socket) do
+    IO.puts("INFOOOOOOOOOoo")
     {:noreply, fetch_rooms(socket)}
+  end
+
+  def handle_info({Userrooms, [:userroom | _], _}, socket) do
+    IO.puts("INFOOOOOOOOOoo")
+    {:noreply, fetch_userrooms(socket)}
+  end
+
+  def handle_info(_, socket) do
+    {:noreply, socket}
   end
 
   defp fetch_rooms(socket) do
     assign(socket, rooms: Rooms.list_rooms())
+  end
+
+  defp fetch_userrooms(socket) do
+    invitations = Userrooms.list_usersroom_by_name(socket.assigns.name)
+
+    IO.puts("INVITATIONS")
+    IO.inspect(invitations)
+
+    if length(invitations) == 0 do
+      assign(socket, room_invitations: invitations)
+    else
+      # This makes a new invitations with the roomname
+      new_invitations = Enum.map(invitations, fn invitation ->
+        userroom = Rooms.get_room!(invitation.roomid)
+        new_invitation = Map.put(invitation, :roomname, userroom.name)
+        IO.inspect(new_invitation)
+        new_invitation
+      end)
+
+      assign(socket, room_invitations: new_invitations)
+    end
   end
 end

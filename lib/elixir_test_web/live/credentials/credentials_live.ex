@@ -70,8 +70,6 @@ defmodule ElixirTestWeb.CredentialsLive do
           |> Map.put(:action, :validate)
 
         changeset = Map.put(changeset, :errors, error_message)
-        IO.puts("ERRORR")
-        IO.inspect(changeset)
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
