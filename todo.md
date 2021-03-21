@@ -1,3 +1,1 @@
- - Make common template for login and register
- - Make option to create, remove, join, and accept people into rooms
- - Maybe add a public rooms, and topics to search for them
+- Maybe add a public rooms, and topics to search for them

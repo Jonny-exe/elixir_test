@@ -90,17 +90,34 @@ defmodule ElixirTestWeb.TodoLive do
       "roomid" => socket.assigns.room,
       "accepted" => false
     })
+
     {:noreply, assign(socket, invitation_modal_active: false)}
   end
 
-  def handle_event("expand_todo", %{"id" => id}, socket) do
-    IO.puts(is_integer(id))
-    id = elem(Integer.parse(id), 0)
+  def handle_event("expand_todo", %{"id" => id, "expanded" => expanded}, socket) do
+    id =
+      if string_to_boolean(expanded) do
+        -1
+      else
+        elem(Integer.parse(id), 0)
+      end
+
+    IO.puts(id)
+
     {:noreply, assign(socket, expandable: id)}
   end
 
   def handle_info({Todos, [:todo | _], _}, socket) do
     {:noreply, fetch_todos(socket)}
+  end
+
+  defp string_to_boolean(potential_boolean) do
+    result = if potential_boolean == "true" do
+      true
+    else
+      false
+    end
+    result
   end
 
   defp fetch_todos(socket) do

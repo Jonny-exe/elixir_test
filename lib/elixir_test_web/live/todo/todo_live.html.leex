@@ -21,9 +21,13 @@
   </div>
 </p>
 
+<%= if (length(@todos) == 0) do %>
+  <h3> The todo list is empty... try adding some todos by clicking <span class="material-icons md-18">add_task</span> </h3>
+<% end %>
+
 <table>
   <%= for todo <- @todos do %>
-    <tr phx-click="expand_todo" phx-value-id="<%= todo.id %>" class="<%= if(todo.done, do: "done", else: "not-done") %>">
+    <tr class="<%= if(todo.done, do: "done", else: "not-done") %>">
       <td>
         <%= todo.title %>
       </td>
@@ -37,6 +41,9 @@
 
           <span class="material-icons"> highlight_off</span>
         <% end %>
+      </td>
+      <td phx-value-id="<%= todo.id %>" phx-click="expand_todo" phx-value-expanded="<%= if(todo.id == @expandable, do: true, else: false) %>">
+        <span class="material-icons expand-button <%= if(todo.id == @expandable, do: "expanded", else: "") %>">expand_more</span>
       </td>
     </tr>
     <tr class="expandable <%= if(todo.id == @expandable, do: "active", else: "deactive") %>">

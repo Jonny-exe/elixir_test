@@ -2,18 +2,24 @@ tables:
 
 rooms
     name:string
-    leader:string
+    creator:string
 
 rooms_users
     room_id:int
-    username: string
+    name: string
 
 users
     name:string
 
 token
-    username:string
+    name:string
     token:string
+
+todo
+    done:boolean
+    description:string
+    title:string
+    writer:string
 
 
     

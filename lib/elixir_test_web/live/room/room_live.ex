@@ -8,7 +8,6 @@ defmodule ElixirTestWeb.RoomLive do
 
   def mount(params, _session, socket) do
     Rooms.subscribe()
-    Userrooms.subscribe()
 
     try do
       %{"name" => name} = params
@@ -46,6 +45,14 @@ defmodule ElixirTestWeb.RoomLive do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
+  def handle_event("open_modal", _, socket) do
+    {:noreply, assign(socket, modal_active: true)}
+  end
+
+  def handle_event("close_modal", _, socket) do
+    {:noreply, assign(socket, modal_active: false)}
+  end
+
   def handle_event("create_room", %{"room" => room}, socket) do
     room = Map.put(room, "creator", socket.assigns.name)
 
@@ -61,15 +68,7 @@ defmodule ElixirTestWeb.RoomLive do
       "accepted" => true
     })
 
-    {:noreply, assign(socket, modal_active: false)}
-  end
-
-  def handle_event("open_modal", _, socket) do
-    {:noreply, assign(socket, modal_active: true)}
-  end
-
-  def handle_event("close_modal", _, socket) do
-    {:noreply, assign(socket, modal_active: false)}
+    {:noreply, assign(fetch_rooms(socket), modal_active: false)}
   end
 
   def handle_event("delete_room", %{"id" => id}, socket) do
@@ -78,7 +77,7 @@ defmodule ElixirTestWeb.RoomLive do
 
     userroom = Userrooms.get_userroom!(id)
     Userrooms.delete_userroom(userroom)
-    {:noreply, socket}
+    {:noreply, fetch_rooms(socket)}
   end
 
   def handle_event("goto_room", %{"id" => id}, socket) do
@@ -102,12 +101,6 @@ defmodule ElixirTestWeb.RoomLive do
     {:noreply, fetch_userrooms(socket)}
   end
 
-  def handle_info({Rooms, [:room | _], _}, socket) do
-    # TODO: this is not needed since it will only be updated when you accept or create, not when
-    # someone else creates a room
-    {:noreply, fetch_rooms(socket)}
-  end
-
   def handle_info({Userrooms, [:userroom | _], _}, socket) do
     {:noreply, fetch_userrooms(socket)}
   end
@@ -126,11 +119,6 @@ defmodule ElixirTestWeb.RoomLive do
       end)
 
     rooms
-    # new_invitations = Enum.map(invitations, fn invitation ->
-    #   userroom = Rooms.get_room!(invitation.roomid)
-    #   new_invitation = Map.put(invitation, :roomname, userroom.name)
-    #   new_invitation
-    # end
   end
 
   defp fetch_rooms(socket) do
@@ -141,9 +129,6 @@ defmodule ElixirTestWeb.RoomLive do
 
   defp fetch_userrooms(socket) do
     invitations = Userrooms.list_usersroom_by_name(socket.assigns.name, false)
-
-    IO.puts("INVITATIONS")
-    IO.inspect(invitations)
 
     if length(invitations) == 0 do
       assign(socket, room_invitations: invitations)
