@@ -21,6 +21,7 @@ defmodule ElixirTestWeb.TodoLive do
       assign(socket,
         changeset: Todo.changeset(%Todo{}, %{}),
         expandable: -1,
+        name: Map.get(params, "name"),
         room: roomid,
         todo_modal_active: false,
         invitation_modal_active: false,
@@ -37,6 +38,10 @@ defmodule ElixirTestWeb.TodoLive do
     roomid = Map.get(params, "roomid")
     roomid = elem(Integer.parse(roomid), 0)
     {:noreply, assign(socket, room: roomid)}
+  end
+  def handle_event("go_back", _unsigned_params, socket) do
+    name = socket.assigns.name
+    ElixirTestWeb.CredentialsLive.redirect_with_token(name, socket)
   end
 
   def handle_event("open_invitation_modal", _, socket) do

@@ -31,14 +31,11 @@
       <td>
         <%= todo.title %>
       </td>
-
       <td>
         <%= checkbox(:todo, :done,value: todo.done, phx_value_id: todo.id, phx_click: "toggle_done") %>
       </td>
       <td>
         <%= link  to: "#", phx_value_id: todo.id, phx_click: "delete_todo" do %>
-          <%# <span class="link-button"> Remove </span> %>
-
           <span class="material-icons"> highlight_off</span>
         <% end %>
       </td>
@@ -70,3 +67,7 @@
 </div>
 <% end %>
 </p>
+
+<%= link  to: "#", phx_click: "go_back" do %>
+  <span class="button-link material-icons">arrow_back</span>
+<% end %>

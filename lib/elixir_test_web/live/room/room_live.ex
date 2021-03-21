@@ -31,7 +31,6 @@ defmodule ElixirTestWeb.RoomLive do
         {:ok, socket}
     end
   end
-
   def handle_params(params, _, socket) do
     CredentialsLive.is_login_correct(params, socket)
   end
@@ -83,6 +82,7 @@ defmodule ElixirTestWeb.RoomLive do
   def handle_event("goto_room", %{"id" => id}, socket) do
     name = socket.assigns.name
     {:ok, token} = CredentialsLive.add_token(name)
+
     {:noreply,
      push_redirect(socket,
        to: "/room/#{id}?access_token=#{token}&name=#{name}"
