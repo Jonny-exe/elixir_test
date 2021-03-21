@@ -1,6 +1,10 @@
 /* This file is for your main application css. */
 @import "./phoenix.css";
 
+body {
+  padding-top: 1%;
+}
+
 /* LiveView specific classes for your customizations */
 .phx-no-feedback.invalid-feedback,
 .phx-no-feedback .invalid-feedback {
@@ -146,4 +150,31 @@
 
 caption {
   text-align: left;
+}
+
+@keyframes description {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.expandable {
+  transform: scaleY(0);
+  transition-duration: 1s;
+
+  &.active {
+    display: inherit;
+    animation: description 1s;
+    transform: scaleY(1);
+  }
+
+  &.deactive {
+    display: none;
+    margin: 0;
+    padding: 0;
+  }
 }

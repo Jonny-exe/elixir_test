@@ -1,6 +1,7 @@
 defmodule ElixirTestWeb.TodoLive do
   use ElixirTestWeb, :live_view
   alias ElixirTest.Todos
+  alias ElixirTest.Todos.Todo
   alias ElixirTestWeb.CredentialsLive
   alias ElixirTest.Users
   alias ElixirTest.Tokens
@@ -18,9 +19,11 @@ defmodule ElixirTestWeb.TodoLive do
 
     socket =
       assign(socket,
-        changeset: Todos.Todo.changeset(%Todos.Todo{}, %{}),
+        changeset: Todo.changeset(%Todo{}, %{}),
+        expandable: -1,
         room: roomid,
-        modal_active: false,
+        todo_modal_active: false,
+        invitation_modal_active: false,
         room_creator: room_creator
       )
 
@@ -36,19 +39,37 @@ defmodule ElixirTestWeb.TodoLive do
     {:noreply, assign(socket, room: roomid)}
   end
 
-  def handle_event("open_modal", _, socket) do
-    {:noreply, assign(socket, modal_active: true)}
+  def handle_event("open_invitation_modal", _, socket) do
+    {:noreply, assign(socket, invitation_modal_active: true)}
   end
 
-  def handle_event("close_modal", _, socket) do
-    {:noreply, assign(socket, modal_active: false)}
+  def handle_event("close_invitation_modal", _, socket) do
+    {:noreply, assign(socket, invitation_modal_active: false)}
   end
 
-  def handle_event("add_todo", %{"todo" => todo}, socket) do
+  def handle_event("open_todo_modal", _, socket) do
+    {:noreply, assign(socket, todo_modal_active: true)}
+  end
+
+  def handle_event("close_todo_modal", _, socket) do
+    {:noreply, assign(socket, todo_modal_active: false)}
+  end
+
+  def handle_event("validate_todo", %{"todo" => todo}, socket) do
+    changeset =
+      %Todo{}
+      |> Todo.input_changeset(todo)
+      |> Map.put(:action, :validate)
+
+    IO.inspect(changeset)
+    {:noreply, assign(socket, changeset: changeset)}
+  end
+
+  def handle_event("create_todo", %{"todo" => todo}, socket) do
     todo = Map.put(todo, "room", socket.assigns.room)
     todo = Map.put(todo, "writer", socket.assigns.name)
     Todos.create_todo(todo)
-    {:noreply, socket}
+    {:noreply, assign(socket, todo_modal_active: false)}
   end
 
   def handle_event("toggle_done", %{"id" => id}, socket) do
@@ -70,6 +91,12 @@ defmodule ElixirTestWeb.TodoLive do
       "accepted" => false
     })
     {:noreply, assign(socket, modal_active: false)}
+  end
+
+  def handle_event("expand_todo", %{"id" => id}, socket) do
+    IO.puts(is_integer(id))
+    id = elem(Integer.parse(id), 0)
+    {:noreply, assign(socket, expandable: id)}
   end
 
   def handle_info({Todos, [:todo | _], _}, socket) do

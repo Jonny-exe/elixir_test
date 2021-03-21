@@ -1,38 +1,69 @@
-<form action="#" phx-submit="add_todo">
-  <%= text_input :todo, :title, placeholder: "Todo" %>
-  <%= submit "Add", phx_disable_with: "Adding..." %>
-</form>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+
+<h1> Todos </h1>
+
+<p>
+<button phx-click="open_todo_modal"> Create todo </button>
+<div class="modal modal-wrapper <%= if(@todo_modal_active, do: "active", else: "deactive") %>">
+  <div class="modal-content">
+    <h2> Invite new people </h2>
+    <%= form_for @changeset, "#", [phx_submit: "create_todo", phx_change: "validate_todo"],  fn f -> %>
+    <%= text_input f, :title, placeholder: "name" %>
+    <%= error_tag f, :title %>
+    <%= textarea :todo, :description, placeholder: "Description" %>
+    <%= error_tag f, :description %>
+    <%= submit "Add", phx_disable_with: "Adding...", disabled: !@changeset.valid? %>
+  <%= end %>
+</div>
+<div phx-click="close_todo_modal" class="modal modal-overlay">
+</div>
+</div>
+</p>
+
 <table>
   <%= for todo <- @todos do %>
-    <tr class="<%= if(todo.done, do: "done", else: "not-done") %>">
+    <tr phx-click="expand_todo" phx-value-id="<%= todo.id %>" class="<%= if(todo.done, do: "done", else: "not-done") %>">
       <td>
         <%= todo.title %>
       </td>
       <td>
         <%= todo.writer %>
       </td>
+
       <td>
         <%= checkbox(:todo, :done,value: todo.done, phx_value_id: todo.id, phx_click: "toggle_done") %>
       </td>
       <td>
         <%= link  to: "#", phx_value_id: todo.id, phx_click: "delete_todo" do %>
-          <span class="link-button"> Remove </span>
+          <%# <span class="link-button"> Remove </span> %>
+
+          <span class="material-icons"> highlight_off</span>
         <% end %>
+      </td>
+    </tr>
+    <tr class="expandable <%= if(todo.id == @expandable, do: "active", else: "deactive") %>">
+      <td colspan="4">
+        <%= todo.description %>
       </td>
     </tr>
   <% end %>
 </table>
+
+<p>
 <%= if @name == @room_creator do %>
-  <button phx-click="open_modal"> Invite people </button>
-  <div class="modal modal-wrapper <%= if(@modal_active, do: "active", else: "deactive") %>">
+  <button phx-click="open_invitation_modal"> Invite people </button>
+  <div class="modal modal-wrapper <%= if(@invitation_modal_active, do: "active", else: "deactive") %>">
     <div class="modal-content">
       <h2> Invite new people </h2>
       <%= form_for @changeset, "#", [phx_submit: "create_invitation"],  fn f -> %>
-        <%= text_input f, :name, placeholder: "name" %>
-        <%= submit "Add", phx_disable_with: "Adding..."%>
+        <%= text_input :todo, :title, placeholder: "Todo" %>
+        <%= submit "Add", phx_disable_with: "Adding..." %>
       <%= end %>
   </div>
-  <div phx-click="close_modal" class="modal modal-overlay">
+  <div phx-click="close_invitation_modal" class="modal modal-overlay">
   </div>
 </div>
 <% end %>
+</p>

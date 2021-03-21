@@ -7,6 +7,7 @@ defmodule ElixirTest.Repo.Migrations.CreateTodos do
       add :done, :boolean, default: false, null: false
       add :writer, :string
       add :room, :integer
+      add :description, :string
 
       timestamps()
     end
