@@ -163,12 +163,13 @@ caption {
 }
 
 .expandable {
+  $speed: 0.5s;
   transform: scaleY(0);
-  transition-duration: 1s;
+  transition-duration: $speed;
 
   &.active {
     display: inherit;
-    animation: description 1s;
+    animation: description $speed;
     transform: scaleY(1);
   }
 
@@ -177,4 +178,18 @@ caption {
     margin: 0;
     padding: 0;
   }
+}
+
+.button-cursor {
+  cursor: pointer;
+}
+
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.expand {
+  width: 100%;
 }

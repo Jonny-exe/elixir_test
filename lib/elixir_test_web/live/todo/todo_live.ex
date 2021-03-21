@@ -84,13 +84,13 @@ defmodule ElixirTestWeb.TodoLive do
     {:noreply, socket}
   end
 
-  def handle_event("create_invitation", %{"todo" => %{"name" => name}}, socket) do
+  def handle_event("create_invitation", %{"invitation" => %{"name" => name}}, socket) do
     Userrooms.create_userroom(%{
       "name" => name,
       "roomid" => socket.assigns.room,
       "accepted" => false
     })
-    {:noreply, assign(socket, modal_active: false)}
+    {:noreply, assign(socket, invitation_modal_active: false)}
   end
 
   def handle_event("expand_todo", %{"id" => id}, socket) do

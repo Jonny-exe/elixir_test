@@ -20,12 +20,12 @@
       <td> <%= room.name %> </td>
       <td>
         <%= link  to: "#", phx_value_id: room.roomid, phx_click: "goto_room" do %>
-          <span class="link-button"> Goto </span>
+          <span class="material-icons">forward</span>
         <% end %>
       </td>
       <td>
         <%= link  to: "#", phx_value_id: room.roomid, phx_click: "delete_room" do %>
-          <span class="link-button"> Remove </span>
+          <span class="material-icons">highlight_off</span>
         <% end %>
       </td>
     </tr>
@@ -53,12 +53,12 @@
       <td> <%= room.roomname %> </td>
       <td>
         <%= link  to: "#", phx_value_id: room.id, phx_click: "accept_invitation" do %>
-          <span class="link-button"> Join </span>
+          <span class="material-icons">task_alt</span>
         <% end %>
       </td>
       <td>
         <%= link  to: "#", phx_value_id: room.id, phx_click: "decline_invitation" do %>
-          <span class="link-button"> Decline </span>
+          <span class="material-icons">highlight_off</span>
         <% end %>
       </td>
     </tr>
