@@ -34,7 +34,7 @@ defmodule ElixirTestWeb.CredentialsLive do
     {:ok, token}
   end
 
-  defp redirect_with_token(name, socket) do
+  def redirect_with_token(name, socket) do
     token = elem(add_token(name), 1)
 
     {:noreply,

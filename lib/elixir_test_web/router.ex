@@ -17,6 +17,7 @@ defmodule ElixirTestWeb.Router do
   scope "/", ElixirTestWeb do
     pipe_through :browser
     live "/credentials/:type", CredentialsLive, :credentials
+    get "/check_credentials", CredentialsController, :credentials
     live "/", RoomLive, :index
     live "/room/:roomid", TodoLive, :index
   end
